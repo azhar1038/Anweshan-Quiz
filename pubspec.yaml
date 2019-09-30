@@ -27,9 +27,7 @@ dependencies:
   ntp: ^1.0.4
   flare_flutter: ^1.5.5
   http: ^0.12.0+2
-  # flutter_upi: ^0.0.2
-  upi_india:
-    path: ../upi_india
+  upi_india: ^1.0.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

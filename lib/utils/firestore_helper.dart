@@ -58,14 +58,6 @@ class FirestoreHelper {
     });
   }
 
-  //TODO: remove deleteAccount.
-  deleteAccount(String mailId) {
-    Firestore.instance.runTransaction((Transaction transaction) async {
-      DocumentReference document = Firestore.instance.document('users/$mailId');
-      await transaction.delete(document);
-    });
-  }
-
   Future<Map<String, dynamic>> getUserDetails(String mailId) async {
     try {
       DocumentReference document = Firestore.instance.document('users/$mailId');

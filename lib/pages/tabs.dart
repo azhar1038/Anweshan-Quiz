@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 
 import 'package:quiz/custom_widgets/top_bar.dart';
+import 'package:quiz/pages/user_profile.dart';
 import 'package:quiz/utils/authentication.dart';
 import 'package:quiz/custom_widgets/bottom_nav_bar.dart';
-import 'package:quiz/utils/firestore_helper.dart';
-import 'sign_in.dart';
 import 'anweshan_prev.dart';
 import 'anweshan_current.dart';
 import 'home.dart';
 import 'rank.dart';
 import 'about_us.dart';
-// TODO: Remove error.
-import 'package:quiz/pages/error.dart';
 
 GoogleAuth auth = new GoogleAuth();
 
@@ -47,45 +44,13 @@ class _TabsState extends State<Tabs> {
       backgroundColor: Colors.lightBlue[200],
       appBar: TopBar(
         title: _title,
-        active: PopupMenuButton<int>(
-          itemBuilder: (context) => [
-            PopupMenuItem(
-              value: 1,
-              child: Text('Signout'),
-            ),
-            PopupMenuItem(
-              value: 2,
-              child: Text('Delete Account'),
-            ),
-          ],
+        active: GestureDetector(
           child: avatar(),
-          onSelected: (value) {
-            switch (value) {
-              case 1:
-                FirestoreHelper()
-                    .firestoreSignOut(widget.user['email'])
-                    .then((_) {
-                  auth.googleSignOut();
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                      builder: (context) => SignIn(),
-                    ),
-                  );
-                }).catchError((error) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                      builder: (context) => Error(error: 'Failed to Sign Out'),
-                    ),
-                  );
-                });
-                break;
-              case 2:
-                auth.deleteAccount();
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => SignIn()));
-                break;
-            }
-          },
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => UserProfile(user: widget.user),
+            ),
+          ),
         ),
       ),
       bottomNavigationBar: BottomNavBar(
@@ -146,7 +111,11 @@ class _TabsState extends State<Tabs> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Colors.lightBlue[200], Colors.lightBlue[100], Colors.white],
+            colors: [
+              Colors.lightBlue[200],
+              Colors.lightBlue[100],
+              Colors.white
+            ],
           ),
         ),
         child: PageView(

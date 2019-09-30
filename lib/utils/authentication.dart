@@ -3,8 +3,6 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-import 'firestore_helper.dart';
-
 class GoogleAuth{
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = new GoogleSignIn();
@@ -29,7 +27,7 @@ class GoogleAuth{
     }
   }
 
-  void googleSignOut() async{
+  Future<void> googleSignOut() async{
     try{
       await _auth.signOut();
       await _googleSignIn.signOut();
@@ -37,14 +35,6 @@ class GoogleAuth{
       throw GoogleAuthException('GOOGLE_AUTH_EXCEPTION: Failed to SignOut => $e');
     }
     
-  }
-
-  // TODO: Remove deleteAccount.
-  void deleteAccount() async{
-    FirebaseUser user = await getUser();
-    FirestoreHelper().deleteAccount(user.email);
-    await _auth.signOut();
-    await _googleSignIn.signOut();
   }
 
   Future<FirebaseUser> getUser(){
