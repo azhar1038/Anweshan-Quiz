@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:quiz/custom_widgets/wait_button.dart';
 import 'package:quiz/pages/sign_in.dart';
+import 'package:quiz/pages/user_qr.dart';
 import 'package:quiz/utils/authentication.dart';
 import 'package:quiz/utils/firestore_helper.dart';
 
@@ -43,8 +45,9 @@ class _Profile extends StatefulWidget {
   __ProfileState createState() => __ProfileState();
 }
 
-class __ProfileState extends State<_Profile> {
+class __ProfileState extends State<_Profile> with TickerProviderStateMixin {
   Map<String, dynamic> userDetails;
+  AnimationController _passController, _logoutController;
 
   @override
   void initState() {
@@ -54,6 +57,14 @@ class __ProfileState extends State<_Profile> {
         .get()
         .then((DocumentSnapshot snapshot) {
       userDetails = snapshot.data;
+      _passController = AnimationController(
+        duration: Duration(milliseconds: 200),
+        vsync: this,
+      );
+      _logoutController = AnimationController(
+        duration: Duration(milliseconds: 200),
+        vsync: this,
+      );
       setState(() {});
     });
   }
@@ -205,48 +216,34 @@ class __ProfileState extends State<_Profile> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
-                      SizedBox(
-                        height: 50,
-                        width: 150,
-                        child: FlatButton(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25.0),
-                          ),
-                          color: Colors.lightBlue,
+                      Container(
+                        alignment: Alignment.center,
+                        child: WaitButton(
+                          key: UniqueKey(),
                           child: Text(
                             'Anweshan Pass',
+                            style: TextStyle(color: Colors.white),
                           ),
-                          textColor: Colors.white,
-                          onPressed: () {},
+                          controller: _passController,
+                          color: Colors.lightBlue,
+                          width: 200.0,
+                          height: 50.0,
+                          onPressed: _userPass,
                         ),
                       ),
-                      SizedBox(
-                        height: 50.0,
-                        width: 150.0,
-                        child: FlatButton(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25.0),
-                          ),
-                          color: Colors.lightBlue,
+                      Container(
+                        alignment: Alignment.center,
+                        child: WaitButton(
+                          key: UniqueKey(),
                           child: Text(
                             'Logout',
+                            style: TextStyle(color: Colors.white),
                           ),
-                          textColor: Colors.white,
-                          onPressed: () {
-                            GoogleAuth().googleSignOut().then((_) {
-                              FirestoreHelper()
-                                  .firestoreSignOut(widget.user['email'])
-                                  .then((_) {
-                                Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => SignIn(),
-                                  ),
-                                  (Route<dynamic> route) => false,
-                                );
-                              });
-                            });
-                          },
+                          controller: _logoutController,
+                          color: Colors.lightBlue,
+                          width: 200.0,
+                          height: 50.0,
+                          onPressed: _logout,
                         ),
                       ),
                     ],
@@ -265,5 +262,47 @@ class __ProfileState extends State<_Profile> {
       return 'Complete';
     }
     return 'Incomplete';
+  }
+
+  void _logout() {
+    GoogleAuth().googleSignOut().then((_) {
+      FirestoreHelper().firestoreSignOut(widget.user['email']).then((_) {
+        _logoutController.reverse();
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => SignIn()),
+          (Route<dynamic> routes) => false,
+        );
+      });
+    }).catchError((error) {
+      showSnackbar('Failed to logout. Try again.');
+      _logoutController.reverse();
+    }).timeout(Duration(seconds: 5), onTimeout: () {
+      showSnackbar('Failed to logout. Try again.');
+      _logoutController.reverse();
+    });
+  }
+
+  void _userPass() {
+    DocumentSnapshot doc;
+    Firestore.instance
+        .collection('registered')
+        .where('email', isEqualTo: widget.user['email'])
+        .getDocuments()
+        .then((snapshot) {
+      if (snapshot != null) {
+        doc = snapshot.documents[0];
+      }
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => UserQRPage(userSnapshot: doc),
+        ),
+      );
+    });
+  }
+
+  void showSnackbar(String message) {
+    Scaffold.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+    ));
   }
 }

@@ -52,18 +52,15 @@ class FirestoreHelper {
   Future<void> firestoreSignOut(String mailId) {
     return Firestore.instance
         .document('users/$mailId')
-        .updateData({'signed': false}).catchError((error) {
-      throw FirestoreHelperException(
-          "FIRESTORE_HELPER_EXCEPTION: Failed to SingnOut => $error");
-    });
+        .updateData({'signed': false});
   }
 
   Future<Map<String, dynamic>> getUserDetails(String mailId) async {
     try {
       DocumentReference document = Firestore.instance.document('users/$mailId');
       DocumentSnapshot snapshot = await document.get();
-      if(snapshot.data == null) throw FirestoreHelperException(
-          "User details missing from database");
+      if (snapshot.data == null)
+        throw FirestoreHelperException("User details missing from database");
       return snapshot.data;
     } catch (e) {
       throw FirestoreHelperException(
