@@ -110,8 +110,10 @@ class _QuestionState extends State<Question>
   @override
   void dispose() {
     if (_controller.status != AnimationStatus.completed) {
-      if (_selected == widget.question['answer'])
+      if (_selected == widget.question['answer']){
+        print('DISPOSE CORRECT');
         widget.onCorrect();
+      }
       else
         widget.onIncorrect(getCorrectAnswer());
     }

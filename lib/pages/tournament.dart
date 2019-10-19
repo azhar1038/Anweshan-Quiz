@@ -53,7 +53,6 @@ class _TournamentState extends State<Tournament> {
     _usedLife = false;
     _popup = false;
     _allowExit = false;
-    print('INIT STATE');
   }
 
   Future<DocumentSnapshot> loadQuestion(int questionNumber) {
@@ -104,6 +103,7 @@ class _TournamentState extends State<Tournament> {
       image: _image,
       onCorrect: () {
         _correct++;
+        print('CORRECT: $_correct');
       },
       onIncorrect: (String correct) {
         _incorrect++;
@@ -148,110 +148,108 @@ class _TournamentState extends State<Tournament> {
               ],
             ),
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: StreamBuilder(
-              stream:
-                  Firestore.instance.document('quiz_info/question').snapshots(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<DocumentSnapshot> snapshot) {
-                if (snapshot.connectionState == ConnectionState.active) {
-                  if (snapshot.hasData) {
-                    int _num = snapshot.data['current'];
-                    print(_num);
-                    if (_popup) Navigator.of(context).pop();
-                    if (_num == -1) {
-                      _allowExit = true;
-                      return Center(
-                        child: Text(
-                          snapshot.data['message'],
-                          style: TextStyle(fontSize: 20.0),
-                          textAlign: TextAlign.center,
-                        ),
-                      );
-                    } else if (_num == 0) {
-                      _allowExit = false;
-                      return Center(
-                        child: Text(
-                          "Get Ready! Quiz is about to start. You cannot exit until quiz is over.",
-                          style: TextStyle(fontSize: 20.0),
-                          textAlign: TextAlign.center,
-                        ),
-                      );
-                    } else if (_num > 0 && _num < 11) {
-                      _allowExit = false;
-                      return FutureBuilder(
-                        future: loadQuestion(_num),
-                        builder: (BuildContext context,
-                            AsyncSnapshot<DocumentSnapshot> question) {
-                          if (question.connectionState ==
-                              ConnectionState.done) {
-                            return buildQuestion(question.data, _num);
-                          }
-                          return Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        },
-                      );
-                    } else if (_num == 11) {
-                      int tempCorrect = _correct;
-                      _correct = 0;
-                      _allowExit = false;
-                      int newTournamentScore = tournamentScore + tempCorrect;
-                      int newGems = gems;
-                      int newConsecutiveAce = consecutiveAce;
-                      int newLife = _life;
-                      if (tempCorrect == 10) {
-                        newGems += 10;
-                        newConsecutiveAce += 1;
-                        if (newConsecutiveAce >= 2) {
-                          newConsecutiveAce = 0;
-                          newLife += 1;
+          child: StreamBuilder(
+            stream:
+                Firestore.instance.document('quiz_info/question').snapshots(),
+            builder: (BuildContext context,
+                AsyncSnapshot<DocumentSnapshot> snapshot) {
+              if (snapshot.connectionState == ConnectionState.active) {
+                if (snapshot.hasData) {
+                  int _num = snapshot.data['current'];
+                  print(_num);
+                  if (_popup) Navigator.of(context).pop();
+                  if (_num == -1) {
+                    _allowExit = true;
+                    return Center(
+                      child: Text(
+                        snapshot.data['message'],
+                        style: TextStyle(fontSize: 20.0),
+                        textAlign: TextAlign.center,
+                      ),
+                    );
+                  } else if (_num == 0) {
+                    _allowExit = false;
+                    return Center(
+                      child: Text(
+                        "Get Ready! Quiz is about to start. You cannot exit until quiz is over.",
+                        style: TextStyle(fontSize: 20.0),
+                        textAlign: TextAlign.center,
+                      ),
+                    );
+                  } else if (_num > 0 && _num < 11) {
+                    _allowExit = false;
+                    return FutureBuilder(
+                      future: loadQuestion(_num),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<DocumentSnapshot> question) {
+                        if (question.connectionState == ConnectionState.done) {
+                          return buildQuestion(question.data, _num);
                         }
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      },
+                    );
+                  } else if (_num == 11) {
+                    int tempCorrect = _correct;
+                    print('CORRECT: $_correct');
+                    print('TEMP CORRECT: $tempCorrect');
+                    _correct = 0;
+                    _allowExit = false;
+                    int newTournamentScore = tournamentScore + tempCorrect;
+                    int newGems = gems;
+                    int newConsecutiveAce = consecutiveAce;
+                    int newLife = _life;
+                    if (tempCorrect == 10) {
+                      newGems += 10;
+                      newConsecutiveAce += 1;
+                      if (newConsecutiveAce >= 2) {
+                        newConsecutiveAce = 0;
+                        newLife += 1;
                       }
-                      Map<String, dynamic> update = {
-                        'consecutiveAce': newConsecutiveAce,
-                        'gems': newGems,
-                        'life': newLife,
-                        'tournamentScore': newTournamentScore,
-                      };
-                      return Center(
-                        child: FutureBuilder(
-                          future: FirestoreHelper().updateUserDetails(
-                              widget.googleUser['email'], update),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.done) {
-                              if (snapshot.hasError) {
-                                return Text(
-                                  'Something went Wrong! Please take a screenshot of this page and Contact Support. Score=$_correct, Life=$_life',
-                                  textAlign: TextAlign.center,
-                                );
-                              }
-                              _allowExit = true;
+                    }
+                    Map<String, dynamic> update = {
+                      'consecutiveAce': newConsecutiveAce,
+                      'gems': newGems,
+                      'life': newLife,
+                      'tournamentScore': newTournamentScore,
+                    };
+                    return Center(
+                      child: FutureBuilder(
+                        future: FirestoreHelper().updateUserDetails(
+                            widget.googleUser['email'], update),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.done) {
+                            if (snapshot.hasError) {
                               return Text(
-                                '$tempCorrect / 10',
-                                style: TextStyle(
-                                  fontSize: 50.0,
-                                  fontWeight: FontWeight.w300,
-                                ),
+                                'Something went Wrong! Please take a screenshot of this page and Contact Support. Score=$_correct, Life=$_life',
+                                textAlign: TextAlign.center,
                               );
                             }
-                            return CircularProgressIndicator();
-                          },
-                        ),
-                      );
-                    }
+                            _allowExit = true;
+                            return Text(
+                              '$tempCorrect / 10',
+                              style: TextStyle(
+                                fontSize: 50.0,
+                                fontWeight: FontWeight.w300,
+                              ),
+                            );
+                          }
+                          return CircularProgressIndicator();
+                        },
+                      ),
+                    );
                   }
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
                 }
                 return Center(
-                  child: Text('Connection Deactivated!'),
+                  child: CircularProgressIndicator(),
                 );
-              },
-            ),
+              }
+              return Center(
+                child: Text('Connection Deactivated!'),
+              );
+            },
           ),
         ),
       ),

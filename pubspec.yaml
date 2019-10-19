@@ -27,7 +27,7 @@ dependencies:
   ntp: ^1.0.4
   flare_flutter: ^1.5.5
   http: ^0.12.0+2
-  upi_india: ^1.0.0
+  upi_india: ^1.1.0
   qr_flutter: ^3.0.1
   firebase_messaging: ^5.1.6
 
