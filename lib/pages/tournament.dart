@@ -53,7 +53,6 @@ class _TournamentState extends State<Tournament> {
     _usedLife = false;
     _popup = false;
     _allowExit = false;
-    print('INIT STATE');
   }
 
   Future<DocumentSnapshot> loadQuestion(int questionNumber) {

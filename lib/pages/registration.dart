@@ -65,6 +65,7 @@ class _RegistrationState extends State<Registration> {
                 'will get your transaction details. Please be sure to keep a screenshot of the ' +
                 'details for future queries. Please stay online during the transaction and do not ' +
                 'press the back button. For any query contact our support team.',
+            textAlign: TextAlign.justify,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -183,7 +184,7 @@ class _RegistrationState extends State<Registration> {
                   break;
                 case UpiIndiaResponseError.INVALID_PARAMETERS:
                   return Text(
-                    'Requested payment is invalid.',
+                    'Requested app rejected to proceed further.',
                     style: _textStyle,
                   );
                   break;
