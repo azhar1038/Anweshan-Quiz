@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class ExpansionCard extends StatefulWidget {
-  final String header;
-  final String description;
+  final Widget header;
+  final Widget body;
   final Duration duration;
   final double initialElevation;
   final double finalElevation;
@@ -10,7 +10,7 @@ class ExpansionCard extends StatefulWidget {
 
   ExpansionCard({
     @required this.header,
-    @required this.description,
+    @required this.body,
     this.duration = const Duration(milliseconds: 200),
     this.initialElevation = 3,
     this.finalElevation = 10,
@@ -70,6 +70,7 @@ class _ExpansionCardState extends State<ExpansionCard>
         builder: (context, child) {
           return Material(
             elevation: _elevation.value,
+            color: Color(0xffe1f5fe),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0)),
             child: InkWell(
@@ -83,14 +84,7 @@ class _ExpansionCardState extends State<ExpansionCard>
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Container(
-                    height: 80,
-                    alignment: Alignment.center,
-                    child: Text(
-                      widget.header,
-                      style: Theme.of(context).textTheme.title,
-                    ),
-                  ),
+                  widget.header,
                   SizeTransition(
                     axisAlignment: 1.0,
                     sizeFactor: _height,
@@ -101,14 +95,7 @@ class _ExpansionCardState extends State<ExpansionCard>
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             Divider(),
-                            Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Text(
-                                widget.description,
-                                textAlign: TextAlign.center,
-                                style: Theme.of(context).textTheme.subtitle,
-                              ),
-                            ),
+                            widget.body,
                           ],
                         ),
                       ),

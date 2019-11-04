@@ -9,7 +9,10 @@
     <application
         android:name="io.flutter.app.FlutterApplication"
         android:label="Anweshan Quiz"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/anweshan_quiz">
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@mipmap/anweshan_quiz_notifi" />
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
