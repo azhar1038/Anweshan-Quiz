@@ -56,16 +56,26 @@ class FirestoreHelper {
   }
 
   Future<Map<String, dynamic>> getUserDetails(String mailId) async {
-    try {
-      DocumentReference document = Firestore.instance.document('users/$mailId');
-      DocumentSnapshot snapshot = await document.get();
+    // try {
+    //   DocumentReference document = Firestore.instance.document('users/$mailId');
+    //   DocumentSnapshot snapshot = await document.get();
+    //   if (snapshot.data == null)
+    //     throw FirestoreHelperException("User details missing from database");
+    //   return snapshot.data;
+    // } catch (e) {
+    //   throw FirestoreHelperException(
+    //       "FIRESTORE_HELPER_EXCEPTION: Failed to get user details => ${e.cause}");
+    // }
+    return Firestore.instance.document('users/$mailId').get().then((snapshot){
       if (snapshot.data == null)
         throw FirestoreHelperException("User details missing from database");
       return snapshot.data;
-    } catch (e) {
+    }).timeout(Duration(seconds: 5), onTimeout: (){
+      throw FirestoreHelperException("Out of time. Try again.");
+    }).catchError((e){
       throw FirestoreHelperException(
           "FIRESTORE_HELPER_EXCEPTION: Failed to get user details => ${e.cause}");
-    }
+    });
   }
 
   Future<void> updateUserDetails(String mailId, Map<String, dynamic> m) {

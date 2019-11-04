@@ -279,7 +279,7 @@ class _RegistrationState extends State<Registration> {
         SizedBox(
           height: 5.0,
         ),
-        Text(
+        SelectableText(
           txnId ?? " ",
           style: _summaryText,
         ),
@@ -293,7 +293,7 @@ class _RegistrationState extends State<Registration> {
         SizedBox(
           height: 5.0,
         ),
-        Text(
+        SelectableText(
           txnRef ?? " ",
           style: _summaryText,
         ),

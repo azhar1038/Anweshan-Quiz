@@ -11,7 +11,7 @@ class ExpansionCard extends StatefulWidget {
   ExpansionCard({
     @required this.header,
     @required this.body,
-    this.duration = const Duration(milliseconds: 200),
+    this.duration = const Duration(milliseconds: 500),
     this.initialElevation = 3,
     this.finalElevation = 10,
     this.descriptionFadeIn = true,
@@ -70,7 +70,7 @@ class _ExpansionCardState extends State<ExpansionCard>
         builder: (context, child) {
           return Material(
             elevation: _elevation.value,
-            color: Color(0xffe1f5fe),
+            color: Colors.white,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0)),
             child: InkWell(

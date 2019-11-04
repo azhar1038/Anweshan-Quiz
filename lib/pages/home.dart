@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:ntp/ntp.dart';
-
 import 'package:quiz/utils/authentication.dart';
 import 'package:quiz/utils/referral_helper.dart';
 import 'package:quiz/pages/daily_challenge.dart';
@@ -117,10 +115,8 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
       controllerInvite.reverse();
     }
   }
-
   startDailyChallenge() async {
     FirestoreHelper().getUserDetails(email).then((user) {
-      NTP.now().then((now) {
         int prevDay = user['dailyChallengeDay'];
         int prevMonth = user['dailyChallengeMonth'];
         int prevYear = user['dailyChallengeYear'];
@@ -132,17 +128,10 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
               dailyChallengeMonth: prevMonth,
               dailyChallengeYear: prevYear,
               gems: user['gems'],
-              now: now,
+              now: DateTime.now(),
             );
           }),
         );
-      }).timeout(
-        Duration(seconds: 3),
-        onTimeout: () {
-          showSnackbar('Failed to get Date. Try again.');
-          controllerDaily.reverse();
-        },
-      );
     }).catchError((error) {
       print(error.cause);
       showSnackbar('Failed to load User data. Try again.');

@@ -19,13 +19,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  connectivity: ^0.4.3+5
-  firebase_auth: ^0.14.0+2
-  google_sign_in: ^4.0.6
-  cloud_firestore: ^0.12.7
-  firebase_dynamic_links: ^0.4.0+4
-  ntp: ^1.0.4
-  flare_flutter: ^1.5.5
+  connectivity: ^0.4.5+2
+  firebase_auth: ^0.14.0+5
+  google_sign_in: ^4.0.11
+  cloud_firestore: ^0.12.9+6
+  firebase_dynamic_links: ^0.4.0+6
+  flare_flutter: ^1.6.4
   http: ^0.12.0+2
   upi_india: ^1.1.0
   qr_flutter: ^3.0.1
