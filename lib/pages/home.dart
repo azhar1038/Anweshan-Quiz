@@ -48,8 +48,16 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
+        Container(
+          height: 200,
+          alignment: Alignment.center,
+          child: Image.asset(
+            'images/sole_logo.png',
+            height: 150.0,
+          ),
+        ),
         Container(
           alignment: Alignment.center,
           child: WaitButton(
@@ -115,23 +123,24 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
       controllerInvite.reverse();
     }
   }
+
   startDailyChallenge() async {
     FirestoreHelper().getUserDetails(email).then((user) {
-        int prevDay = user['dailyChallengeDay'];
-        int prevMonth = user['dailyChallengeMonth'];
-        int prevYear = user['dailyChallengeYear'];
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) {
-            return DailyChallenge(
-              user: widget.user,
-              dailyChallengeDay: prevDay,
-              dailyChallengeMonth: prevMonth,
-              dailyChallengeYear: prevYear,
-              gems: user['gems'],
-              now: DateTime.now(),
-            );
-          }),
-        );
+      int prevDay = user['dailyChallengeDay'];
+      int prevMonth = user['dailyChallengeMonth'];
+      int prevYear = user['dailyChallengeYear'];
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) {
+          return DailyChallenge(
+            user: widget.user,
+            dailyChallengeDay: prevDay,
+            dailyChallengeMonth: prevMonth,
+            dailyChallengeYear: prevYear,
+            gems: user['gems'],
+            now: DateTime.now(),
+          );
+        }),
+      );
     }).catchError((error) {
       print(error.cause);
       showSnackbar('Failed to load User data. Try again.');

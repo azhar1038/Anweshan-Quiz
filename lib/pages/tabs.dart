@@ -40,100 +40,100 @@ class _TabsState extends State<Tabs> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.lightBlue[200],
-      appBar: TopBar(
-        title: _title,
-        active: GestureDetector(
-          child: avatar(),
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => UserProfile(user: widget.user),
-            ),
-          ),
+    return Stack(
+      children: <Widget>[
+        Image.asset(
+          'images/background.jpg',
+          fit: BoxFit.cover,
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          alignment: Alignment.bottomCenter,
         ),
-      ),
-      bottomNavigationBar: BottomNavBar(
-        selectedIndex: _selectedIndex,
-        showElevation: true,
-        onItemSelected: (index) {
-          if (_selectedIndex != index)
-            return setState(() {
-              _selectedIndex = index;
-              _pageController.jumpToPage(index);
-              _title = titles[index];
-            });
-        },
-        items: [
-          BottomNavBarItem(
-              icon: Text(
-                '19',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: bottomBarColor,
-                    fontSize: 20),
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: TopBar(
+            title: _title,
+            active: GestureDetector(
+              child: avatar(),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => UserProfile(user: widget.user),
+                ),
               ),
-              title: Text(
-                '2019',
+            ),
+          ),
+          bottomNavigationBar: BottomNavBar(
+            selectedIndex: _selectedIndex,
+            showElevation: true,
+            onItemSelected: (index) {
+              if (_selectedIndex != index)
+                return setState(() {
+                  _selectedIndex = index;
+                  _pageController.jumpToPage(index);
+                  _title = titles[index];
+                });
+            },
+            items: [
+              BottomNavBarItem(
+                  icon: Text(
+                    '19',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: bottomBarColor,
+                        fontSize: 20),
+                  ),
+                  title: Text(
+                    '2019',
+                  ),
+                  activeColor: bottomBarColor),
+              BottomNavBarItem(
+                icon: Text(
+                  '20',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: bottomBarColor,
+                      fontSize: 20),
+                ),
+                title: Text(
+                  '2020',
+                ),
+                activeColor: bottomBarColor,
               ),
-              activeColor: bottomBarColor),
-          BottomNavBarItem(
-            icon: Text(
-              '20',
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: bottomBarColor,
-                  fontSize: 20),
-            ),
-            title: Text(
-              '2020',
-            ),
-            activeColor: bottomBarColor,
-          ),
-          BottomNavBarItem(
-            icon: Icon(Icons.home),
-            title: Text('Home'),
-            activeColor: bottomBarColor,
-          ),
-          BottomNavBarItem(
-            icon: Icon(Icons.equalizer),
-            title: Text('Rank'),
-            activeColor: bottomBarColor,
-          ),
-          BottomNavBarItem(
-              icon: Icon(Icons.group),
-              title: Text('About Us'),
-              activeColor: bottomBarColor),
-        ],
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.lightBlue[200],
-              Colors.lightBlue[100],
-              Colors.white
+              BottomNavBarItem(
+                icon: Icon(Icons.home),
+                title: Text('Home'),
+                activeColor: bottomBarColor,
+              ),
+              BottomNavBarItem(
+                icon: Icon(Icons.equalizer),
+                title: Text('Rank'),
+                activeColor: bottomBarColor,
+              ),
+              BottomNavBarItem(
+                  icon: Icon(Icons.group),
+                  title: Text('About Us'),
+                  activeColor: bottomBarColor),
             ],
           ),
+          body: Container(
+            child: PageView(
+              controller: _pageController,
+              physics: NeverScrollableScrollPhysics(),
+              children: <Widget>[
+                AnweshanPrev(),
+                AnweshanCurrent(user: widget.user),
+                Home(user: widget.user),
+                Rank(),
+                AboutUs(),
+              ],
+              onPageChanged: (index) => setState(() {
+                _selectedIndex = index;
+                _title = titles[index];
+              }),
+            ),
+          ),
         ),
-        child: PageView(
-          controller: _pageController,
-          physics: NeverScrollableScrollPhysics(),
-          children: <Widget>[
-            AnweshanPrev(),
-            AnweshanCurrent(user: widget.user),
-            Home(user: widget.user),
-            Rank(),
-            AboutUs(),
-          ],
-          onPageChanged: (index) => setState(() {
-            _selectedIndex = index;
-            _title = titles[index];
-          }),
-        ),
-      ),
+      ],
     );
   }
 

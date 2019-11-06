@@ -16,55 +16,56 @@ class SignIn extends StatelessWidget {
   final GoogleLoadController _controller = GoogleLoadController(play: false);
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.lightBlue[200],
-      appBar: TopBar(
-        title: 'Sign In',
-        active: Icon(Icons.supervised_user_circle, color: Colors.green),
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.lightBlue[200], Colors.lightBlue[100], Colors.white],
-          ),
+    return Stack(
+      children: <Widget>[
+        Image.asset(
+          'images/background.jpg',
+          fit: BoxFit.cover,
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Center(
-              child: Container(
-                margin: EdgeInsets.only(bottom: 20.0),
-                child: Text(
-                  '   Sign In with:',
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-            Center(
-              child: GestureDetector(
-                onTap: () {
-                  if (_controller.play == false) signIn(context);
-                },
-                child: SizedBox(
-                  height: 50,
-                  width: 50,
-                  child: Center(
-                    child: FlareActor(
-                      'flare/Google_loader.flr',
-                      controller: _controller,
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: TopBar(
+            title: 'Sign In',
+            active: Icon(Icons.supervised_user_circle, color: Colors.green),
+          ),
+          body: Container(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Center(
+                  child: Container(
+                    margin: EdgeInsets.only(bottom: 20.0),
+                    child: Text(
+                      '   Sign In with:',
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
-              ),
+                Center(
+                  child: GestureDetector(
+                    onTap: () {
+                      if (_controller.play == false) signIn(context);
+                    },
+                    child: SizedBox(
+                      height: 50,
+                      width: 50,
+                      child: Center(
+                        child: FlareActor(
+                          'flare/Google_loader.flr',
+                          controller: _controller,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 

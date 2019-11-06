@@ -10,15 +10,9 @@ class Wait extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.lightBlue[200], Colors.lightBlue[100], Colors.white],
-          ),
-        ),
+    return Material(
+      color: Colors.transparent,
+      child: Container(
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

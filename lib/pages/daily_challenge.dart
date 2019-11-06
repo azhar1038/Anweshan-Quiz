@@ -121,8 +121,12 @@ class _DailyChallengeState extends State<DailyChallenge> {
             padding: const EdgeInsets.only(bottom: 20.0),
             child: RaisedButton(
               color: Colors.blue,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-              child: Text('Submit', style: TextStyle(color: Colors.white),),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0)),
+              child: Text(
+                'Submit',
+                style: TextStyle(color: Colors.white),
+              ),
               onPressed: () => showDialog(
                   context: context,
                   builder: (context) {
@@ -174,35 +178,35 @@ class _DailyChallengeState extends State<DailyChallenge> {
 
     return WillPopScope(
       onWillPop: onBackPress,
-      child: Scaffold(
-        backgroundColor: Colors.lightBlue[200],
-        appBar: TopBar(
-          title: 'Daily Challenge',
-          active: GestureDetector(
-            child: Container(
-              padding: EdgeInsets.only(right: 10.0),
-              child: Icon(
-                Icons.arrow_back_ios,
-                size: 18.0,
+      child: Stack(
+        children: <Widget>[
+          Image.asset(
+            'images/background.jpg',
+            fit: BoxFit.cover,
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            alignment: Alignment.bottomCenter,
+          ),
+          Scaffold(
+            backgroundColor: Colors.transparent,
+            appBar: TopBar(
+              title: 'Daily Challenge',
+              active: GestureDetector(
+                child: Container(
+                  padding: EdgeInsets.only(right: 10.0),
+                  child: Icon(
+                    Icons.arrow_back_ios,
+                    size: 18.0,
+                  ),
+                ),
+                onTap: onBackPress,
               ),
             ),
-            onTap: onBackPress,
-          ),
-        ),
-        body: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Colors.lightBlue[200],
-                Colors.lightBlue[100],
-                Colors.white
-              ],
+            body: Container(
+              child: _body,
             ),
           ),
-          child: _body,
-        ),
+        ],
       ),
     );
   }
@@ -414,21 +418,33 @@ class _ResultsState extends State<Results> {
 
     return WillPopScope(
       onWillPop: () => onBackPress(),
-      child: Scaffold(
-        appBar: TopBar(
-          title: 'Challenge Result',
-          active: GestureDetector(
-            child: Container(
-              padding: EdgeInsets.only(right: 10.0),
-              child: Icon(
-                Icons.arrow_back_ios,
-                size: 18.0,
+      child: Stack(
+        children: <Widget>[
+          Image.asset(
+            'images/background.jpg',
+            fit: BoxFit.cover,
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            alignment: Alignment.bottomCenter,
+          ),
+          Scaffold(
+            backgroundColor: Colors.transparent,
+            appBar: TopBar(
+              title: 'Challenge Result',
+              active: GestureDetector(
+                child: Container(
+                  padding: EdgeInsets.only(right: 10.0),
+                  child: Icon(
+                    Icons.arrow_back_ios,
+                    size: 18.0,
+                  ),
+                ),
+                onTap: () => onBackPress(),
               ),
             ),
-            onTap: () => onBackPress(),
+            body: _body,
           ),
-        ),
-        body: _body,
+        ],
       ),
     );
   }
@@ -474,7 +490,11 @@ class _ResultsState extends State<Results> {
           child: Center(
             child: Text(
               text,
-              style: TextStyle(fontSize: 16.0),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ),

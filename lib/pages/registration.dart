@@ -266,55 +266,55 @@ class _RegistrationState extends State<Registration> {
       ],
     ));
 
-    return Scaffold(
-      backgroundColor: Colors.lightBlue[200],
-      appBar: TopBar(
-        title: 'Registration',
-        active: GestureDetector(
-          child: Container(
-            padding: EdgeInsets.only(right: 10.0),
-            child: Icon(
-              Icons.arrow_back_ios,
-              size: 18.0,
-            ),
-          ),
-          onTap: () => Navigator.of(context).pop(),
+    return Stack(
+      children: <Widget>[
+        Image.asset(
+          'images/background.jpg',
+          fit: BoxFit.cover,
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          alignment: Alignment.bottomCenter,
         ),
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.lightBlue[200],
-              Colors.lightBlue[100],
-              Colors.white
-            ],
-          ),
-        ),
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              'Instructions:',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: TopBar(
+            title: 'Registration',
+            active: GestureDetector(
+              child: Container(
+                padding: EdgeInsets.only(right: 10.0),
+                child: Icon(
+                  Icons.arrow_back_ios,
+                  size: 18.0,
+                ),
               ),
+              onTap: () => Navigator.of(context).pop(),
             ),
-            SizedBox(
-              height: 10,
+          ),
+          body: Container(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  'Instructions:',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                _instructionBody,
+                SizedBox(
+                  height: 20,
+                ),
+                _paymentBody,
+              ],
             ),
-            _instructionBody,
-            SizedBox(
-              height: 20,
-            ),
-            _paymentBody,
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 }
