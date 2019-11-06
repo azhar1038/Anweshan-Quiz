@@ -21,6 +21,9 @@ class SignIn extends StatelessWidget {
         Image.asset(
           'images/background.jpg',
           fit: BoxFit.cover,
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          alignment: Alignment.bottomCenter,
         ),
         Scaffold(
           backgroundColor: Colors.transparent,

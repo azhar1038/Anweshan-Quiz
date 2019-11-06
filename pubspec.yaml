@@ -53,6 +53,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - flare/Google_loader.flr
+    - flare/Animated orb.flr
     - images/bhim.jpg
     - images/gpay.jpg
     - images/paytm.jpg

@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flare_flutter/flare_actor.dart';
+import 'package:flare_flutter/flare_controls.dart';
 import 'package:flutter/material.dart';
 import 'package:quiz/custom_widgets/question.dart';
 import 'package:http/http.dart' as http;
@@ -157,12 +159,8 @@ class _TournamentState extends State<Tournament> {
                     if (_popup) Navigator.of(context).pop();
                     if (_num == -1) {
                       _allowExit = true;
-                      return Center(
-                        child: Text(
-                          snapshot.data['message'],
-                          style: TextStyle(fontSize: 20.0),
-                          textAlign: TextAlign.center,
-                        ),
+                      return MessageDisplay(
+                        message: snapshot.data['message'],
                       );
                     } else if (_num == 0) {
                       _allowExit = false;
@@ -251,6 +249,46 @@ class _TournamentState extends State<Tournament> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class MessageDisplay extends StatefulWidget {
+  final String message;
+
+  MessageDisplay({
+    @required this.message,
+  });
+
+  @override
+  _MessageDisplayState createState() => _MessageDisplayState();
+}
+
+class _MessageDisplayState extends State<MessageDisplay> {
+  
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Container(
+            height: 200,
+            width: 200,
+            child: FlareActor(
+              'flare/Animated orb.flr',
+              fit: BoxFit.contain,
+              animation: 'Aura',
+            ),
+          ),
+          Text(
+            widget.message,
+            style: TextStyle(fontSize: 20.0),
+            textAlign: TextAlign.center,
+          ),
+        ],
+        
       ),
     );
   }
