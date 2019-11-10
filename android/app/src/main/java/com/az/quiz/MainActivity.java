@@ -2,6 +2,7 @@ package com.az.quiz;
 
 import android.os.Bundle;
 import android.content.Intent;
+import android.net.Uri;
 
 
 import java.util.Map;
@@ -15,7 +16,7 @@ import io.flutter.plugin.common.MethodChannel.Result;
 
 public class MainActivity extends FlutterActivity {
 
-  private static final String CHANNEL = "com.az.quiz/referral";
+  private static final String CHANNEL = "com.az.quiz/intent";
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +30,22 @@ public class MainActivity extends FlutterActivity {
           Intent intent = new Intent(Intent.ACTION_SEND);
           intent.setType("text/plain");
           intent.putExtra(Intent.EXTRA_TEXT, message);
-          startActivity(Intent.createChooser(intent, "Share App!"));
+          if(intent.resolveActivity(getPackageManager()) != null){
+            startActivity(Intent.createChooser(intent, "Share App!"));
+          }
+          
+        }else if(methodCall.method.equals("callIntent")){
+          Uri uri = Uri.parse("tel:9078600468");
+          Intent intent = new Intent(Intent.ACTION_CALL, uri);
+          if(intent.resolveActivity(getPackageManager())!=null){
+            startActivity(Intent.createChooser(intent, "Call using..."));
+          }
+        }else if(methodCall.method.equals("facebookIntent")){
+          Uri uri = Uri.parse("https://www.facebook.com/soleigit/");
+          Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+          if(intent.resolveActivity(getPackageManager()) != null){
+            startActivity(Intent.createChooser(intent, "Open with..."));
+          }
         }
       }
     });

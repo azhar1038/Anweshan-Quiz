@@ -60,6 +60,7 @@ flutter:
     - images/phonepe.jpg
     - images/sole_logo.png
     - images/background.jpg
+    - images/facebook.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

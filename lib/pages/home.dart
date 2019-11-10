@@ -25,7 +25,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     @required this.email,
   });
 
-  static const platform = const MethodChannel('com.az.quiz/referral');
+  static const platform = const MethodChannel('com.az.quiz/intent');
   AnimationController controllerInvite, controllerDaily, controllerTournament;
 
   @override

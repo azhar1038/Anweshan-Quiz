@@ -15,22 +15,24 @@ class UserProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        Image.asset(
-          'images/background.jpg',
-          fit: BoxFit.cover,
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          alignment: Alignment.bottomCenter,
-        ),
-        Scaffold(
-          backgroundColor: Colors.transparent,
-          body: Container(
-            child: _Profile(user: user),
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.lightBlue[300],
+              Colors.lightBlue[100],
+              Colors.white,
+            ],
           ),
         ),
-      ],
+        child: _Profile(
+          user: user,
+        ),
+      ),
     );
   }
 }
