@@ -2,6 +2,7 @@ import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:quiz/custom_widgets/how_to_play.dart';
 
 import 'package:quiz/custom_widgets/top_bar.dart';
 import 'package:quiz/utils/authentication.dart';
@@ -118,7 +119,14 @@ class SignIn extends StatelessWidget {
     _controller.play = true;
     auth.googleSignIn().then((FirebaseUser user) {
       print(user.email);
-      FirestoreHelper().firestoreSignIn(user.email, user.displayName).then((_) {
+      FirestoreHelper()
+          .firestoreSignIn(user.email, user.displayName)
+          .then((_) async {
+        await showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => HowToPlay(),
+        );
         Map<String, dynamic> details = {
           'email': user.email,
           'name': user.displayName,
