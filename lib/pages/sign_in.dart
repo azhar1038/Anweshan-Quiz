@@ -33,35 +33,77 @@ class SignIn extends StatelessWidget {
           ),
           body: Container(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                Center(
-                  child: Container(
-                    margin: EdgeInsets.only(bottom: 20.0),
-                    child: Text(
-                      '   Sign In with:',
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-                Center(
-                  child: GestureDetector(
-                    onTap: () {
-                      if (_controller.play == false) signIn(context);
-                    },
-                    child: SizedBox(
-                      height: 50,
-                      width: 50,
-                      child: Center(
-                        child: FlareActor(
-                          'flare/Google_loader.flr',
-                          controller: _controller,
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Center(
+                        child: Container(
+                          margin: EdgeInsets.only(bottom: 20.0),
+                          child: Text(
+                            '   Sign In with:',
+                            style: TextStyle(
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                      Center(
+                        child: GestureDetector(
+                          onTap: () {
+                            if (_controller.play == false) signIn(context);
+                          },
+                          child: SizedBox(
+                            height: 50,
+                            width: 50,
+                            child: Center(
+                              child: FlareActor(
+                                'flare/Google_loader.flr',
+                                controller: _controller,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.bottomCenter,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        'By Signing you agree to our',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      FlatButton(
+                        textColor: Colors.white,
+                        child: Text('TERMS OF SERVICE'),
+                        onPressed: () => showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) => AlertDialog(
+                            title: Text('Terms of Service'),
+                            content: Text(
+                              'By signing in you agree to allow us to use your Email ID and some publicly available data like your Username and Profile picture.\n\n' +
+                                  'We WON\'T be disclosing those information to any third party services. Other users of this app can see those details.',
+                              textAlign: TextAlign.justify,
+                            ),
+                            actions: <Widget>[
+                              FlatButton(
+                                child: Text('OK'),
+                                onPressed: () => Navigator.of(context).pop(),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
