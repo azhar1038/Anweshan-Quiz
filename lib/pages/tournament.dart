@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flare_flutter/flare_actor.dart';
-import 'package:flare_flutter/flare_controls.dart';
 import 'package:flutter/material.dart';
 import 'package:quiz/custom_widgets/question.dart';
 import 'package:http/http.dart' as http;
@@ -138,135 +137,137 @@ class _TournamentState extends State<Tournament> {
           else
             return false;
         },
-        child: Stack(
-          children: <Widget>[
-            Image.asset(
-              'images/background.jpg',
-              fit: BoxFit.cover,
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              alignment: Alignment.bottomCenter,
+        // child: Stack(
+        //   children: <Widget>[
+        //     Image.asset(
+        //       'images/background.jpg',
+        //       fit: BoxFit.cover,
+        //       height: MediaQuery.of(context).size.height,
+        //       width: MediaQuery.of(context).size.width,
+        //       alignment: Alignment.bottomCenter,
+        //     ),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.lightBlue[300],
+                Colors.lightBlue[100],
+                Colors.white,
+              ],
             ),
-            StreamBuilder(
-              stream:
-                  Firestore.instance.document('quiz_info/question').snapshots(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<DocumentSnapshot> snapshot) {
-                if (snapshot.connectionState == ConnectionState.active) {
-                  if (snapshot.hasData) {
-                    int _num = snapshot.data['current'];
-                    print(_num);
-                    if (_popup) Navigator.of(context).pop();
-                    if (_num == -1) {
-                      _allowExit = true;
-                      return MessageDisplay(
-                        message: snapshot.data['message'],
-                      );
-                    } else if (_num == 0) {
-                      _allowExit = false;
-                      return Center(
-                        child: Text(
-                          "Get Ready! Quiz is about to start. You cannot exit until quiz is over.",
-                          style: TextStyle(fontSize: 20.0),
-                          textAlign: TextAlign.center,
-                        ),
-                      );
-                    } else if (_num > 0 && _num < 11) {
-                      _allowExit = false;
-                      return FutureBuilder(
-                        future: loadQuestion(_num),
-                        builder: (BuildContext context,
-                            AsyncSnapshot<DocumentSnapshot> question) {
-                          if (question.connectionState ==
-                              ConnectionState.done) {
-                            return buildQuestion(question.data, _num);
-                          }
-                          return Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        },
-                      );
-                    } else if (_num == 11) {
-                      int tempCorrect = _correct;
-                      print('CORRECT: $_correct');
-                      print('TEMP CORRECT: $tempCorrect');
-                      _correct = 0;
-                      _allowExit = false;
-                      int newTournamentScore = tournamentScore + tempCorrect;
-                      int newGems = gems;
-                      int newConsecutiveAce = consecutiveAce;
-                      int newLife = _life;
-                      if (tempCorrect == 10) {
-                        newGems += 10;
-                        newConsecutiveAce += 1;
-                        if (newConsecutiveAce >= 2) {
-                          newConsecutiveAce = 0;
-                          newLife += 1;
+          ),
+          child: StreamBuilder(
+            stream:
+                Firestore.instance.document('quiz_info/question').snapshots(),
+            builder: (BuildContext context,
+                AsyncSnapshot<DocumentSnapshot> snapshot) {
+              if (snapshot.connectionState == ConnectionState.active) {
+                if (snapshot.hasData) {
+                  int _num = snapshot.data['current'];
+                  print(_num);
+                  if (_popup) Navigator.of(context).pop();
+                  if (_num == -1) {
+                    _allowExit = true;
+                    return MessageDisplay(
+                      message: snapshot.data['message'],
+                    );
+                  } else if (_num == 0) {
+                    _allowExit = false;
+                    return Center(
+                      child: Text(
+                        "Get Ready! Quiz is about to start. You cannot exit until quiz is over.",
+                        style: TextStyle(fontSize: 20.0),
+                        textAlign: TextAlign.center,
+                      ),
+                    );
+                  } else if (_num > 0 && _num < 11) {
+                    _allowExit = false;
+                    return FutureBuilder(
+                      future: loadQuestion(_num),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<DocumentSnapshot> question) {
+                        if (question.connectionState == ConnectionState.done) {
+                          return buildQuestion(question.data, _num);
                         }
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      },
+                    );
+                  } else if (_num == 11) {
+                    int tempCorrect = _correct;
+                    int tempIncorrect = _incorrect;
+                    _correct = 0;
+                    _incorrect = 0;
+                    _allowExit = false;
+                    int newTournamentScore = tournamentScore + tempCorrect;
+                    int newGems = gems;
+                    int newConsecutiveAce = consecutiveAce;
+                    int newLife = _life;
+                    if (tempCorrect == 10) {
+                      newGems += 10;
+                      newConsecutiveAce += 1;
+                      if (newConsecutiveAce >= 2) {
+                        newConsecutiveAce = 0;
+                        newLife += 1;
                       }
-                      Map<String, dynamic> update = {
-                        'consecutiveAce': newConsecutiveAce,
-                        'gems': newGems,
-                        'life': newLife,
-                        'tournamentScore': newTournamentScore,
-                      };
-                      return Center(
-                        child: FutureBuilder(
-                          future: FirestoreHelper().updateUserDetails(
-                              widget.googleUser['email'], update),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.done) {
-                              if (snapshot.hasError) {
-                                return Text(
-                                  'Something went Wrong! Please take a screenshot of this page and Contact Support. Score=$_correct, Life=$_life',
-                                  textAlign: TextAlign.center,
-                                );
-                              }
-                              _allowExit = true;
+                    }
+                    Map<String, dynamic> update = {
+                      'consecutiveAce': newConsecutiveAce,
+                      'gems': newGems,
+                      'life': newLife,
+                      'tournamentScore': newTournamentScore,
+                    };
+                    return Center(
+                      child: FutureBuilder(
+                        future: FirestoreHelper().updateUserDetails(
+                            widget.googleUser['email'], update),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.done) {
+                            if (snapshot.hasError) {
                               return Text(
-                                '$tempCorrect / 10',
-                                style: TextStyle(
-                                  fontSize: 50.0,
-                                  fontWeight: FontWeight.w300,
-                                ),
+                                'Something went Wrong! Please take a screenshot of this page and Contact Support. Score=$_correct, Life=$_life',
+                                textAlign: TextAlign.center,
                               );
                             }
-                            return CircularProgressIndicator();
-                          },
-                        ),
-                      );
-                    }
+                            return ResultDisplay(
+                              correct: tempCorrect,
+                              incorrect: tempIncorrect,
+                            );
+                          }
+                          return CircularProgressIndicator();
+                        },
+                      ),
+                    );
                   }
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
                 }
                 return Center(
-                  child: Text('Connection Deactivated!'),
+                  child: CircularProgressIndicator(),
                 );
-              },
-            ),
-          ],
+              }
+              return Center(
+                child: Text('Connection Deactivated!'),
+              );
+            },
+          ),
         ),
+        //],
+        //),
       ),
     );
   }
 }
 
-class MessageDisplay extends StatefulWidget {
+class MessageDisplay extends StatelessWidget {
   final String message;
 
   MessageDisplay({
     @required this.message,
   });
 
-  @override
-  _MessageDisplayState createState() => _MessageDisplayState();
-}
-
-class _MessageDisplayState extends State<MessageDisplay> {
-  
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -283,12 +284,139 @@ class _MessageDisplayState extends State<MessageDisplay> {
             ),
           ),
           Text(
-            widget.message,
+            message,
             style: TextStyle(fontSize: 20.0),
             textAlign: TextAlign.center,
           ),
         ],
-        
+      ),
+    );
+  }
+}
+
+class ResultDisplay extends StatelessWidget {
+  final int correct, incorrect;
+  ResultDisplay({
+    @required this.correct,
+    @required this.incorrect,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    TextStyle textStyle = TextStyle(
+      fontSize: 20,
+      fontWeight: FontWeight.bold,
+    );
+
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 20),
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.all(20),
+            child: Text(
+              "Your Score: ",
+              style: textStyle,
+            ),
+          ),
+          Expanded(
+            child: Center(
+              child: Text(
+                correct.toString(),
+                style: TextStyle(
+                  fontSize: 70,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                  width: MediaQuery.of(context).size.width * correct * 0.1,
+                  color: Colors.green,
+                  height: 30,
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width * incorrect * 0.1,
+                  color: Colors.red,
+                  height: 30,
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width *
+                      (10 - correct - incorrect) *
+                      0.1,
+                  color: Colors.yellow,
+                  height: 30,
+                )
+              ],
+            ),
+          ),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        'Correct',
+                        style: textStyle,
+                      ),
+                      Text(
+                        correct.toString(),
+                        style: textStyle,
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        'Incorrect',
+                        style: textStyle,
+                      ),
+                      Text(
+                        incorrect.toString(),
+                        style: textStyle,
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        'Not Attempted',
+                        style: textStyle,
+                      ),
+                      Text(
+                        (10 - correct - incorrect).toString(),
+                        style: textStyle,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
