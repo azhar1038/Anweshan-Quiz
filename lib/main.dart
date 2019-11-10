@@ -49,6 +49,28 @@ class _HomepageState extends State<Homepage> {
   void initState() {
     super.initState();
     _firebaseMessaging.subscribeToTopic('all');
+    _firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> notification) async {
+        print(notification.toString());
+        return showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context){
+            return AlertDialog(
+              title: Text(notification['notification']['title']??''),
+              content: Text(notification['notification']['body']??''),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text('OK'),
+                  textColor: Colors.green,
+                  onPressed: ()=>Navigator.of(context).pop(),
+                ),
+              ],
+            );
+          }
+        );
+      },
+    );
   }
 
   @override
