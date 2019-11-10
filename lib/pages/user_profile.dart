@@ -48,7 +48,7 @@ class _Profile extends StatefulWidget {
 
 class __ProfileState extends State<_Profile> with TickerProviderStateMixin {
   Map<String, dynamic> userDetails;
-  AnimationController _passController, _logoutController;
+  AnimationController _passController, _lifeController, _logoutController;
 
   @override
   void initState() {
@@ -59,6 +59,10 @@ class __ProfileState extends State<_Profile> with TickerProviderStateMixin {
         .then((DocumentSnapshot snapshot) {
       userDetails = snapshot.data;
       _passController = AnimationController(
+        duration: Duration(milliseconds: 200),
+        vsync: this,
+      );
+      _lifeController = AnimationController(
         duration: Duration(milliseconds: 200),
         vsync: this,
       );
@@ -237,6 +241,21 @@ class __ProfileState extends State<_Profile> with TickerProviderStateMixin {
                         child: WaitButton(
                           key: UniqueKey(),
                           child: Text(
+                            'Buy Life',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          controller: _lifeController,
+                          color: Colors.lightBlue,
+                          width: 200.0,
+                          height: 50.0,
+                          onPressed: _buyLife,
+                        ),
+                      ),
+                      Container(
+                        alignment: Alignment.center,
+                        child: WaitButton(
+                          key: UniqueKey(),
+                          child: Text(
                             'Logout',
                             style: TextStyle(color: Colors.white),
                           ),
@@ -299,6 +318,45 @@ class __ProfileState extends State<_Profile> with TickerProviderStateMixin {
         ),
       );
     });
+  }
+
+  void _buyLife() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: Text('Buy Life?'),
+        content: Text('Would you like to spend 10 gems to purchase 1 life?'),
+        actions: <Widget>[
+          FlatButton(
+            textColor: Colors.red,
+            child: Text('No'),
+            onPressed: () {
+              _lifeController.reverse();
+              Navigator.of(context).pop();
+            },
+          ),
+          FlatButton(
+            textColor: Colors.green,
+            child: Text('Yes'),
+            onPressed: () {
+              FirestoreHelper().buyLife(widget.user['email']).then((_) {
+                _lifeController.reverse();
+                setState(() {
+                  userDetails['gems'] = userDetails['gems'] - 10;
+                  userDetails['life'] = userDetails['life'] + 1;
+                });
+              }).catchError((error) {
+                print(error.cause);
+                showSnackbar('Failed to complete Transaction.');
+                _lifeController.reverse();
+              });
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   void showSnackbar(String message) {

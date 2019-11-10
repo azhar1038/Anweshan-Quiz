@@ -56,23 +56,13 @@ class FirestoreHelper {
   }
 
   Future<Map<String, dynamic>> getUserDetails(String mailId) async {
-    // try {
-    //   DocumentReference document = Firestore.instance.document('users/$mailId');
-    //   DocumentSnapshot snapshot = await document.get();
-    //   if (snapshot.data == null)
-    //     throw FirestoreHelperException("User details missing from database");
-    //   return snapshot.data;
-    // } catch (e) {
-    //   throw FirestoreHelperException(
-    //       "FIRESTORE_HELPER_EXCEPTION: Failed to get user details => ${e.cause}");
-    // }
-    return Firestore.instance.document('users/$mailId').get().then((snapshot){
+    return Firestore.instance.document('users/$mailId').get().then((snapshot) {
       if (snapshot.data == null)
         throw FirestoreHelperException("User details missing from database");
       return snapshot.data;
-    }).timeout(Duration(seconds: 5), onTimeout: (){
+    }).timeout(Duration(seconds: 5), onTimeout: () {
       throw FirestoreHelperException("Out of time. Try again.");
-    }).catchError((e){
+    }).catchError((e) {
       throw FirestoreHelperException(
           "FIRESTORE_HELPER_EXCEPTION: Failed to get user details => ${e.cause}");
     });
@@ -83,6 +73,29 @@ class FirestoreHelper {
     return document.updateData(m).catchError((error) {
       throw FirestoreHelperException(
           "FIRESTORE_HELPER_EXCEPTION: Failed to update user details => $error");
+    });
+  }
+
+  Future<void> buyLife(String mailId) {
+    return Firestore.instance.runTransaction((Transaction t) {
+      DocumentReference d = Firestore.instance.document('users/$mailId');
+      return t.get(d).then((snapshot) {
+        if (snapshot.data['gems'] >= 10) {
+          t.update(
+            d,
+            {
+              'gems': snapshot.data['gems'] - 10,
+              'life': snapshot.data['life'] + 1
+            },
+          );
+        }else{
+          throw FirestoreHelperException('Insufficient amount of gems');
+        }
+      }).catchError((error){
+        throw FirestoreHelperException('Failed to update details.');
+      });
+    }).catchError((error){
+      throw FirestoreHelperException('Failed to complete transaction.');
     });
   }
 }
