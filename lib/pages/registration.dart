@@ -24,11 +24,11 @@ class _RegistrationState extends State<Registration> {
   Future<String> initTransaction(String app) async {
     UpiIndia upi = new UpiIndia(
       app: app,
-      receiverUpiId: '9078600498@ybl',
-      receiverName: 'MdAzharuddin',
+      receiverUpiId: '9439717907@paytm',
+      receiverName: 'SOLE',
       transactionRefId: 'AnWeshaN2020',
       transactionNote: 'Registration for Anweshan 2020',
-      amount: 1.00,
+      amount: 50.00,
     );
 
     String response = await upi.startTransaction();

@@ -35,7 +35,8 @@ public class MainActivity extends FlutterActivity {
           }
           
         }else if(methodCall.method.equals("callIntent")){
-          Uri uri = Uri.parse("tel:9078600468");
+          
+          Uri uri = Uri.parse("tel:9439717907");
           Intent intent = new Intent(Intent.ACTION_CALL, uri);
           if(intent.resolveActivity(getPackageManager())!=null){
             startActivity(Intent.createChooser(intent, "Call using..."));
