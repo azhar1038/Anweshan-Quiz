@@ -14,17 +14,27 @@ class ReferralHelper{
   }
 
   Future<Uri> generateReferralLink(String referrerMailId) async {
-    final DynamicLinkParameters parameters = DynamicLinkParameters(
-      uriPrefix: URI_PREFIX,
-      link: Uri.parse('$URI_PREFIX?referrer=$referrerMailId'),
-      androidParameters: AndroidParameters(
-        packageName: 'com.az.quiz',
-        minimumVersion: 1,
-        fallbackUrl: Uri.parse(APP_DOWNLOAD_LINK),
-      ),
-    );
-    final ShortDynamicLink shortDynamicLink = await parameters.buildShortLink();
-    final Uri referralLink = shortDynamicLink.shortUrl;
-    return referralLink;
+    try{
+      final DynamicLinkParameters parameters = DynamicLinkParameters(
+        uriPrefix: URI_PREFIX,
+        link: Uri.parse('$URI_PREFIX?referrer=$referrerMailId'),
+        androidParameters: AndroidParameters(
+          packageName: 'com.az.quiz',
+          minimumVersion: 1,
+          fallbackUrl: Uri.parse(APP_DOWNLOAD_LINK),
+        ),
+      );
+      final ShortDynamicLink shortDynamicLink = await parameters.buildShortLink();
+      final Uri referralLink = shortDynamicLink.shortUrl;
+      return referralLink;
+    }catch(e){
+      throw ReferralHelperException("Failed to generate link: $e");
+    }
+    
   }
+}
+
+class ReferralHelperException implements Exception {
+  String cause;
+  ReferralHelperException(this.cause);
 }

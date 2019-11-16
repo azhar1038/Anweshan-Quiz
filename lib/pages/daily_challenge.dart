@@ -178,35 +178,37 @@ class _DailyChallengeState extends State<DailyChallenge> {
 
     return WillPopScope(
       onWillPop: onBackPress,
-      child: Stack(
-        children: <Widget>[
-          Image.asset(
-            'images/background.jpg',
-            fit: BoxFit.cover,
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            alignment: Alignment.bottomCenter,
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.lightBlue[300],
+              Colors.lightBlue[100],
+              Colors.white,
+            ],
           ),
-          Scaffold(
-            backgroundColor: Colors.transparent,
-            appBar: TopBar(
-              title: 'Daily Challenge',
-              active: GestureDetector(
-                child: Container(
-                  padding: EdgeInsets.only(right: 10.0),
-                  child: Icon(
-                    Icons.arrow_back_ios,
-                    size: 18.0,
-                  ),
+        ),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: TopBar(
+            title: 'Daily Challenge',
+            active: GestureDetector(
+              child: Container(
+                padding: EdgeInsets.only(right: 10.0),
+                child: Icon(
+                  Icons.arrow_back_ios,
+                  size: 18.0,
                 ),
-                onTap: onBackPress,
               ),
-            ),
-            body: Container(
-              child: _body,
+              onTap: onBackPress,
             ),
           ),
-        ],
+          body: Container(
+            child: _body,
+          ),
+        ),
       ),
     );
   }
@@ -418,33 +420,35 @@ class _ResultsState extends State<Results> {
 
     return WillPopScope(
       onWillPop: () => onBackPress(),
-      child: Stack(
-        children: <Widget>[
-          Image.asset(
-            'images/background.jpg',
-            fit: BoxFit.cover,
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            alignment: Alignment.bottomCenter,
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.lightBlue[300],
+              Colors.lightBlue[100],
+              Colors.white,
+            ],
           ),
-          Scaffold(
-            backgroundColor: Colors.transparent,
-            appBar: TopBar(
-              title: 'Challenge Result',
-              active: GestureDetector(
-                child: Container(
-                  padding: EdgeInsets.only(right: 10.0),
-                  child: Icon(
-                    Icons.arrow_back_ios,
-                    size: 18.0,
-                  ),
+        ),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: TopBar(
+            title: 'Challenge Result',
+            active: GestureDetector(
+              child: Container(
+                padding: EdgeInsets.only(right: 10.0),
+                child: Icon(
+                  Icons.arrow_back_ios,
+                  size: 18.0,
                 ),
-                onTap: () => onBackPress(),
               ),
+              onTap: () => onBackPress(),
             ),
-            body: _body,
           ),
-        ],
+          body: _body,
+        ),
       ),
     );
   }

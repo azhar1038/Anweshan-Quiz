@@ -27,10 +27,12 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
 
   static const platform = const MethodChannel('com.az.quiz/intent');
   AnimationController controllerInvite, controllerDaily, controllerTournament;
+  bool _buttonReady;
 
   @override
   void initState() {
     super.initState();
+    _buttonReady = true;
     controllerInvite = AnimationController(
       duration: Duration(milliseconds: 200),
       vsync: this,
@@ -108,64 +110,110 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   }
 
   sendReferral() async {
-    GoogleAuth auth = GoogleAuth();
-    String email = (await auth.getUser()).email;
-    Uri referralLink = await ReferralHelper().generateReferralLink(email);
-    var message = 'I found this interesting app! Check it out.\n$referralLink';
-    try {
-      platform.invokeMethod('referralIntent', message);
-    } catch (e) {
-      print("Failed to reffer: $e");
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text('Failed to generate Invitation.'),
-      ));
-    } finally {
+    if (_buttonReady) {
+      _buttonReady = false;
+      GoogleAuth auth = GoogleAuth();
+      String email = (await auth.getUser()).email;
+      ReferralHelper().generateReferralLink(email).then((Uri referralLink) {
+        var message =
+            'I found this interesting app! Check it out.\n$referralLink';
+        try {
+          platform.invokeMethod('referralIntent', message);
+        } catch (e) {
+          print("Failed to reffer: $e");
+          Scaffold.of(context).showSnackBar(SnackBar(
+            content: Text('Failed to generate Invitation.'),
+          ));
+        } finally {
+          _buttonReady = true;
+          controllerInvite.reverse();
+        }
+      }).catchError((error){
+        print(error.cause);
+        showSnackbar('Failed to generate link. Try again.');
+        _buttonReady=true;
+        controllerInvite.reverse();
+      }).timeout(Duration(seconds: 5), onTimeout: () {
+        _buttonReady = true;
+        controllerInvite.reverse();
+        showSnackbar('Oops! Try again.');
+      });
+    } else {
+      await Future.delayed(Duration(milliseconds: 100));
       controllerInvite.reverse();
+      showSnackbar('Please wait.');
     }
   }
 
   startDailyChallenge() async {
-    FirestoreHelper().getUserDetails(email).then((user) {
-      int prevDay = user['dailyChallengeDay'];
-      int prevMonth = user['dailyChallengeMonth'];
-      int prevYear = user['dailyChallengeYear'];
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) {
-          return DailyChallenge(
-            user: widget.user,
-            dailyChallengeDay: prevDay,
-            dailyChallengeMonth: prevMonth,
-            dailyChallengeYear: prevYear,
-            gems: user['gems'],
-            now: DateTime.now(),
-          );
-        }),
-      );
-    }).catchError((error) {
-      print(error.cause);
-      showSnackbar('Failed to load User data. Try again.');
+    if (_buttonReady) {
+      _buttonReady = false;
+      FirestoreHelper().getUserDetails(email).then((user) {
+        int prevDay = user['dailyChallengeDay'];
+        int prevMonth = user['dailyChallengeMonth'];
+        int prevYear = user['dailyChallengeYear'];
+        controllerDaily.reverse();
+        _buttonReady = true;
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) {
+            return DailyChallenge(
+              user: widget.user,
+              dailyChallengeDay: prevDay,
+              dailyChallengeMonth: prevMonth,
+              dailyChallengeYear: prevYear,
+              gems: user['gems'],
+              now: DateTime.now(),
+            );
+          }),
+        );
+      }).catchError((error) {
+        print(error.cause);
+        showSnackbar('Failed to load User data. Try again.');
+        controllerDaily.reverse();
+        _buttonReady = true;
+      }).timeout(Duration(seconds: 5), onTimeout: () {
+        _buttonReady = true;
+        controllerDaily.reverse();
+        showSnackbar('Oops! Try again.');
+      });
+    } else {
+      await Future.delayed(Duration(milliseconds: 100));
       controllerDaily.reverse();
-    });
+      showSnackbar('Please wait.');
+    }
   }
 
   startTournament() async {
-    FirestoreHelper().getUserDetails(email).then((user) {
+    if (_buttonReady) {
+      _buttonReady = false;
+      FirestoreHelper().getUserDetails(email).then((user) {
+        _buttonReady = true;
+        controllerTournament.reverse();
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) {
+              return Tournament(
+                user: user,
+                googleUser: widget.user,
+              );
+            },
+          ),
+        );
+      }).catchError((error) {
+        print(error.cause);
+        showSnackbar('Failed to load user data. Try again.');
+        _buttonReady = true;
+        controllerTournament.reverse();
+      }).timeout(Duration(seconds: 5), onTimeout: (){
+        _buttonReady = true;
+        controllerTournament.reverse();
+        showSnackbar('Oops! Try again.');
+      });
+    } else {
+      await Future.delayed(Duration(milliseconds: 100));
       controllerTournament.reverse();
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) {
-            return Tournament(
-              user: user,
-              googleUser: widget.user,
-            );
-          },
-        ),
-      );
-    }).catchError((error) {
-      print(error.cause);
-      showSnackbar('Failed to load user data. Try again.');
-      controllerTournament.reverse();
-    });
+      showSnackbar('Please wait.');
+    }
   }
 
   void showSnackbar(String message) {

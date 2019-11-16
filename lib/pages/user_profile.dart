@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:quiz/custom_widgets/wait_button.dart';
+import 'package:quiz/pages/registration.dart';
 import 'package:quiz/pages/sign_in.dart';
 import 'package:quiz/pages/user_qr.dart';
 import 'package:quiz/utils/authentication.dart';
@@ -51,10 +52,12 @@ class _Profile extends StatefulWidget {
 class __ProfileState extends State<_Profile> with TickerProviderStateMixin {
   Map<String, dynamic> userDetails;
   AnimationController _passController, _lifeController, _logoutController;
+  bool _buttonReady;
 
   @override
   void initState() {
     super.initState();
+    _buttonReady = true;
     Firestore.instance
         .document('users/${widget.user['email']}')
         .get()
@@ -286,79 +289,128 @@ class __ProfileState extends State<_Profile> with TickerProviderStateMixin {
     return 'Incomplete';
   }
 
-  void _logout() {
-    GoogleAuth().googleSignOut().then((_) {
-      FirestoreHelper().firestoreSignOut(widget.user['email']).then((_) {
+  void _logout() async {
+    if (_buttonReady) {
+      _buttonReady = false;
+      GoogleAuth().googleSignOut().then((_) {
+        FirestoreHelper().firestoreSignOut(widget.user['email']).then((_) {
+          _logoutController.reverse();
+          _buttonReady = true;
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => SignIn()),
+            (Route<dynamic> routes) => false,
+          );
+        });
+      }).catchError((error) {
+        showSnackbar('Failed to logout. Try again.');
         _logoutController.reverse();
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => SignIn()),
-          (Route<dynamic> routes) => false,
-        );
+        _buttonReady = true;
+      }).timeout(Duration(seconds: 5), onTimeout: () {
+        showSnackbar('Server timeout. Try again.');
+        _logoutController.reverse();
+        _buttonReady = true;
       });
-    }).catchError((error) {
-      showSnackbar('Failed to logout. Try again.');
+    } else {
+      await Future.delayed(Duration(milliseconds: 100));
       _logoutController.reverse();
-    }).timeout(Duration(seconds: 5), onTimeout: () {
-      showSnackbar('Failed to logout. Try again.');
-      _logoutController.reverse();
-    });
+      showSnackbar('Please wait.');
+    }
   }
 
-  void _userPass() {
-    DocumentSnapshot doc;
-    Firestore.instance
-        .collection('registered')
-        .where('email', isEqualTo: widget.user['email'])
-        .getDocuments()
-        .then((snapshot) {
-      if (snapshot != null) {
-        doc = snapshot.documents[0];
-      }
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => UserQRPage(userSnapshot: doc),
+  void _userPass() async {
+    if (_buttonReady) {
+      _buttonReady = false;
+      Firestore.instance
+          .collection('registered')
+          .where('email', isEqualTo: widget.user['email'])
+          .getDocuments()
+          .then((snapshot) {
+        _buttonReady = true;
+        _passController.reverse();
+        if (snapshot.documents.length > 0) {
+          DocumentSnapshot doc = snapshot.documents[0];
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => UserQRPage(userSnapshot: doc),
+            ),
+          );
+        } else {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => Registration(
+                user: widget.user,
+              ),
+            ),
+          );
+        }
+      }).catchError((error) {
+        print(error);
+        showSnackbar('Failed to get pass. Try again.');
+        _passController.reverse();
+        _buttonReady = true;
+      }).timeout(Duration(seconds: 5), onTimeout: () {
+        showSnackbar('Server timeout. Try again.');
+        _passController.reverse();
+        _buttonReady = true;
+      });
+    } else {
+      await Future.delayed(Duration(milliseconds: 100));
+      _passController.reverse();
+      showSnackbar('Please wait.');
+    }
+  }
+
+  void _buyLife() async {
+    if (_buttonReady) {
+      _buttonReady = false;
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          title: Text('Buy Life?'),
+          content: Text('Would you like to spend 10 gems to purchase 1 life?'),
+          actions: <Widget>[
+            FlatButton(
+              textColor: Colors.red,
+              child: Text('No'),
+              onPressed: () {
+                _lifeController.reverse();
+                _buttonReady = true;
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              textColor: Colors.green,
+              child: Text('Yes'),
+              onPressed: () {
+                FirestoreHelper().buyLife(widget.user['email']).then((_) {
+                  _lifeController.reverse();
+                  _buttonReady = true;
+                  setState(() {
+                    userDetails['gems'] = userDetails['gems'] - 10;
+                    userDetails['life'] = userDetails['life'] + 1;
+                  });
+                }).catchError((error) {
+                  print(error.cause);
+                  showSnackbar('Failed to complete Transaction.');
+                  _lifeController.reverse();
+                  _buttonReady = true;
+                }).timeout(Duration(seconds: 5), onTimeout: (){
+                  showSnackbar('Server timeout. Try again.');
+                  _lifeController.reverse();
+                  _buttonReady = true;
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
         ),
       );
-    });
-  }
-
-  void _buyLife() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: Text('Buy Life?'),
-        content: Text('Would you like to spend 10 gems to purchase 1 life?'),
-        actions: <Widget>[
-          FlatButton(
-            textColor: Colors.red,
-            child: Text('No'),
-            onPressed: () {
-              _lifeController.reverse();
-              Navigator.of(context).pop();
-            },
-          ),
-          FlatButton(
-            textColor: Colors.green,
-            child: Text('Yes'),
-            onPressed: () {
-              FirestoreHelper().buyLife(widget.user['email']).then((_) {
-                _lifeController.reverse();
-                setState(() {
-                  userDetails['gems'] = userDetails['gems'] - 10;
-                  userDetails['life'] = userDetails['life'] + 1;
-                });
-              }).catchError((error) {
-                print(error.cause);
-                showSnackbar('Failed to complete Transaction.');
-                _lifeController.reverse();
-              });
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      ),
-    );
+    } else {
+      await Future.delayed(Duration(milliseconds: 100));
+      _lifeController.reverse();
+      showSnackbar('Please wait.');
+    }
   }
 
   void showSnackbar(String message) {
