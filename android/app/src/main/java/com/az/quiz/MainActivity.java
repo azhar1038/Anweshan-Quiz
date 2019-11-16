@@ -41,9 +41,9 @@ public class MainActivity extends FlutterActivity {
           }
           
         }else if(methodCall.method.equals("callIntent")){
-          if(ContextCompat.checkSelfPermission(this.activity(),
+          if(ContextCompat.checkSelfPermission(MainActivity.this,
             Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED){
-              ActivityCompat.requestPermission(this, new String[]{Manifest.permission.CALL_PHONE}, GET_PHONE_PERMISSION_REQUEST_ID);
+              ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CALL_PHONE}, GET_PHONE_PERMISSION_REQUEST_ID);
           }else {
             Uri uri = Uri.parse("tel:9439717907");
             Intent intent = new Intent(Intent.ACTION_CALL, uri);
