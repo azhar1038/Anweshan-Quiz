@@ -120,6 +120,9 @@ class _AboutUsState extends State<AboutUs> {
                   }
                 },
               ),
+              SizedBox(
+                height: 50,
+              ),
               Text(
                 'For any Query',
                 style: _header,

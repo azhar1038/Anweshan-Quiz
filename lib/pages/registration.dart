@@ -266,16 +266,28 @@ class _RegistrationState extends State<Registration> {
       ],
     ));
 
-    return Stack(
-      children: <Widget>[
-        Image.asset(
-          'images/background.jpg',
-          fit: BoxFit.cover,
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          alignment: Alignment.bottomCenter,
-        ),
-        Scaffold(
+    // return Stack(
+    //   children: <Widget>[
+    //     Image.asset(
+    //       'images/background.jpg',
+    //       fit: BoxFit.cover,
+    //       height: MediaQuery.of(context).size.height,
+    //       width: MediaQuery.of(context).size.width,
+    //       alignment: Alignment.bottomCenter,
+    //     ),
+    return Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.lightBlue[300],
+                Colors.lightBlue[100],
+                Colors.white,
+              ],
+            ),
+          ),
+        child:Scaffold(
           backgroundColor: Colors.transparent,
           appBar: TopBar(
             title: 'Registration',
@@ -314,7 +326,7 @@ class _RegistrationState extends State<Registration> {
             ),
           ),
         ),
-      ],
+      // ],
     );
   }
 }

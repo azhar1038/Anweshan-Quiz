@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:quiz/custom_widgets/expansion_card.dart';
 
@@ -107,72 +109,82 @@ class _AnweshanPrevState extends State<AnweshanPrev> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: events.length,
-      itemBuilder: (context, index) {
-        return ExpansionCard(
-          header: Container(
-            padding: EdgeInsets.all(16.0),
-            alignment: Alignment.center,
-            child: Text(
-              events[index].title,
-              style: Theme.of(context).textTheme.title,
-            ),
-          ),
-          body: Container(
-            padding: EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Text(
-                  events[index].day,
-                  style: Theme.of(context)
-                      .textTheme
-                      .subhead
-                      .copyWith(fontWeight: FontWeight.w600),
+    return BackdropFilter(
+      filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+      child: Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.height,
+        decoration: BoxDecoration(
+          color: Colors.grey.shade200.withOpacity(0.1),
+        ),
+        child: ListView.builder(
+          itemCount: events.length,
+          itemBuilder: (context, index) {
+            return ExpansionCard(
+              header: Container(
+                padding: EdgeInsets.all(16.0),
+                alignment: Alignment.center,
+                child: Text(
+                  events[index].title,
+                  style: Theme.of(context).textTheme.title,
                 ),
-                SizedBox(height: 10),
-                Text(
-                  'Coordinators: ',
-                  style: Theme.of(context)
-                      .textTheme
-                      .subhead
-                      .copyWith(fontWeight: FontWeight.w700),
+              ),
+              body: Container(
+                padding: EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text(
+                      events[index].day,
+                      style: Theme.of(context)
+                          .textTheme
+                          .subhead
+                          .copyWith(fontWeight: FontWeight.w600),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      'Coordinators: ',
+                      style: Theme.of(context)
+                          .textTheme
+                          .subhead
+                          .copyWith(fontWeight: FontWeight.w700),
+                    ),
+                    ListView.builder(
+                      itemCount: events[index].coordinators.length,
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, i) {
+                        return Text(events[index].coordinators[i]);
+                      },
+                    ),
+                    SizedBox(height: 10),
+                    events[index].professors != null
+                        ? Text(
+                            'Professors: ',
+                            style: Theme.of(context)
+                                .textTheme
+                                .subhead
+                                .copyWith(fontWeight: FontWeight.w700),
+                          )
+                        : Container(),
+                    events[index].professors != null
+                        ? ListView.builder(
+                            itemCount: events[index].professors.length,
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, i) {
+                              return Text(events[index].professors[i]);
+                            },
+                          )
+                        : Container(),
+                  ],
                 ),
-                ListView.builder(
-                  itemCount: events[index].coordinators.length,
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemBuilder: (context, i) {
-                    return Text(events[index].coordinators[i]);
-                  },
-                ),
-                SizedBox(height: 10),
-                events[index].professors != null
-                    ? Text(
-                        'Professors: ',
-                        style: Theme.of(context)
-                            .textTheme
-                            .subhead
-                            .copyWith(fontWeight: FontWeight.w700),
-                      )
-                    : Container(),
-                events[index].professors != null
-                    ? ListView.builder(
-                        itemCount: events[index].professors.length,
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemBuilder: (context, i) {
-                          return Text(events[index].professors[i]);
-                        },
-                      )
-                    : Container(),
-              ],
-            ),
-          ),
-        );
-      },
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 }

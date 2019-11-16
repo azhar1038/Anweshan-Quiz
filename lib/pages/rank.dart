@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:quiz/pages/wait.dart';
@@ -10,20 +12,31 @@ class Rank extends StatefulWidget {
 class _RankState extends State<Rank> {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: FutureBuilder(
-        future: getRankers(),
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasError) {
-              return Text('Oops! There was some error loading the data.');
-            }
-            return displayRankers(snapshot.data);
-          }
-          return Wait(
-            waitText: 'Please wait while we load Data.',
-          );
-        },
+    return BackdropFilter(
+      filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+      child: Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.height,
+        decoration: BoxDecoration(
+          color: Colors.grey.shade200.withOpacity(0.1),
+        ),
+        child: Center(
+          child: FutureBuilder(
+            future: getRankers(),
+            builder:
+                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.hasError) {
+                  return Text('Oops! There was some error loading the data.');
+                }
+                return displayRankers(snapshot.data);
+              }
+              return Wait(
+                waitText: 'Please wait while we load Data.',
+              );
+            },
+          ),
+        ),
       ),
     );
   }
