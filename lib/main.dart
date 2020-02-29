@@ -9,6 +9,7 @@ import 'pages/error.dart';
 import 'pages/wait.dart';
 
 void main(){
+  WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(
       systemNavigationBarColor: Colors.transparent,

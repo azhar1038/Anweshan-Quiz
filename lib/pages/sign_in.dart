@@ -132,13 +132,13 @@ class SignIn extends StatelessWidget {
           ),
         );
       }).catchError((error) {
-        print(error);
+        print(error.cause);
         auth.googleSignOut();
         _controller.play = false;
         throw Exception(error);
       });
     }).catchError((error) {
-      print(error);
+      print(error.cause);
       _controller.play = false;
       Scaffold.of(context).showSnackBar(SnackBar(
         content: Text('Failed to SignIn. Try again.'),

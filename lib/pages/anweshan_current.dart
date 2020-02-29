@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:quiz/custom_widgets/wait_button.dart';
+import 'package:quiz/pages/anweshan_2020.dart';
 import 'package:quiz/pages/anweshan_prev.dart';
 
 import 'package:quiz/pages/registration.dart';
@@ -80,7 +81,7 @@ class _AnweshanCurrentState extends State<AnweshanCurrent>
                         onPressed: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => AnweshanPrev(),
+                              builder: (context) => Anweshan2020(user: widget.user,),
                             ),
                           );
                         },
